@@ -27,11 +27,11 @@ public class QueueDataStructure<T extends Object> implements DataStructures<T> {
 			novo.setProx(syrup);
 			syrup.setAnt(novo);
 		}else {
-			Node<T> aux = head.getProx();
-			novo.setAnt(head);
-			novo.setProx(aux);
-			aux.setAnt(novo);
-			head.setProx(novo);
+			Node<T> aux = syrup.getAnt();
+			novo.setProx(syrup);
+			novo.setAnt(aux);
+			aux.setProx(novo);
+			syrup.setAnt(novo);
 		}
 	}
 
@@ -60,6 +60,14 @@ public class QueueDataStructure<T extends Object> implements DataStructures<T> {
 	@Override
 	public int size() {
 		return length;
+	}
+	
+	public T front() {
+		return head.getProx().getValue();
+	}
+	
+	public T back() {
+		return syrup.getAnt().getValue();
 	}
 
 	@Override
