@@ -3,11 +3,12 @@ package br.com.java.data.structures.main;
 import br.com.java.data.structures.DequeDataStructure;
 import br.com.java.data.structures.QueueDataStructure;
 import br.com.java.data.structures.StackDataStructure;
+import br.com.java.data.structures.TreeBinaryDataStructure;
 
 public class Main {
 
 	public static void main(String[] args) {
-		System.out.println("----- STACK (PILHA) ------");
+		/*System.out.println("----- STACK (PILHA) ------");
 		StackDataStructure<Integer> pilha = new StackDataStructure<Integer>();
 		pilha.add(25);
 		pilha.add(65);
@@ -45,8 +46,44 @@ public class Main {
 		System.out.println("BACK: " + deque.back());
 		System.out.println("SIZE: " + deque.size());
 		
-		System.out.println(deque);
+		System.out.println(deque);*/
 		
+		TreeBinaryDataStructure<Long> binaryDataStructure = new TreeBinaryDataStructure<Long>((long)25);
+		
+		binaryDataStructure.add((long) 12);
+		binaryDataStructure.add((long) 45);
+		binaryDataStructure.add((long) 14);
+		binaryDataStructure.add((long) 50);
+		binaryDataStructure.add((long) 17);
+		binaryDataStructure.add((long) 85);
+		
+		System.out.println("Pré-Ordem");
+		binaryDataStructure.preOrdem(binaryDataStructure.getRoot());
+		System.out.println();
+		System.out.println("Pos-Ordem");
+		binaryDataStructure.posOrdem(binaryDataStructure.getRoot());
+		System.out.println();
+		System.out.println("Ordem Simetrica");
+		binaryDataStructure.ordemSimetrica(binaryDataStructure.getRoot());
+		System.out.println();
+		System.out.println("Nível");
+		binaryDataStructure.nivel(binaryDataStructure.getRoot(), binaryDataStructure);
+		
+		System.out.println("\n\n\n");
+		System.out.println("------");
+		
+		binaryDataStructure.remove(binaryDataStructure.getRoot(), (long) 45);
+		System.out.println("Pré-Ordem");
+		binaryDataStructure.preOrdem(binaryDataStructure.getRoot());
+		System.out.println();
+		System.out.println("Pos-Ordem");
+		binaryDataStructure.posOrdem(binaryDataStructure.getRoot());
+		System.out.println();
+		System.out.println("Ordem Simetrica");
+		binaryDataStructure.ordemSimetrica(binaryDataStructure.getRoot());
+		System.out.println();
+		System.out.println("Nível");
+		binaryDataStructure.nivel(binaryDataStructure.getRoot(), binaryDataStructure);
 	}
 
 }
