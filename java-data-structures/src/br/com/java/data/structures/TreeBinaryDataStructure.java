@@ -1,25 +1,35 @@
 package br.com.java.data.structures;
 
-import java.io.Console;
-
 public class TreeBinaryDataStructure<T extends Object> implements DataStructures<T>{
 	
 	private NodeTree<T> root = new NodeTree<T>();
-	private int length = 0;
-	private boolean isExist = false;
+	private NodeTree<T> father = root;
 	private QueueDataStructure<NodeTree<T>> fila = new QueueDataStructure<NodeTree<T>>();
 	
 	public TreeBinaryDataStructure(T value) {
 		this.root.setValue(value);
 	}
 	
-	private NodeTree<T> lastChild(NodeTree<T> root) {
+	private NodeTree<T> child(NodeTree<T> root, T value) {
+		long numberParm = ((Number) value).longValue();
+		long numberRoot = ((Number) root.getValue()).longValue();
+		
+		if(!root.equals(this.root) && (numberParm < numberRoot) && !isChildLeft(root)) {
+			return root;
+		}
+		
+		if(!root.equals(this.root) && (numberParm > numberRoot) && !isChildRight(root)) {
+			return root;
+		}
+		
 		if(root.getLeft() != null) {
-			return lastChild(root.getLeft());
+			return child(root.getLeft(), value);
 		}
+		
 		if(root.getRight() != null) {
-			return lastChild(root.getRight());
+			return child(root.getRight(), value);
 		}
+		
 		return root;
 	}
 	
@@ -39,34 +49,40 @@ public class TreeBinaryDataStructure<T extends Object> implements DataStructures
 				root.setRight(node);
 			}else {
 				if(numberParm.longValue() < numberRoot.longValue()) {
-					NodeTree<T> last = lastChild(root.getLeft());
+					
+					NodeTree<T> last = child(root.getLeft(), value);
 					Number number = (Number) last.getValue();
 					if(numberParm.longValue() > number.longValue()) {
 						NodeTree<T> node = new NodeTree<T>(value);
 						node.setFather(last);
 						last.setRight(node);
 					}else {
+						System.out.println(value);
 						NodeTree<T> node = new NodeTree<T>(value);
 						node.setFather(last);
 						last.setLeft(node);
 					}
+					 
 				}else {
-					NodeTree<T> last = lastChild(root.getRight());
-					Number number = (Number) last.getValue();
-					if(numberParm.longValue() > number.longValue()) {
-						NodeTree<T> node = new NodeTree<T>(value);
-						node.setFather(last);
-						last.setRight(node);
-					}else {
-						NodeTree<T> node = new NodeTree<T>(value);
-						node.setFather(last);
-						last.setLeft(node);
+					NodeTree<T> last = child(root.getRight(), value);
+					if(last != null) {
+						Number number = (Number) last.getValue();
+						if(numberParm.longValue() > number.longValue()) {
+							NodeTree<T> node = new NodeTree<T>(value);
+							node.setFather(last);
+							last.setRight(node);
+						}else {
+							NodeTree<T> node = new NodeTree<T>(value);
+							node.setFather(last);
+							last.setLeft(node);
+						}
 					}
 				}
 			}
 		}
-		
 	}
+	
+ 
 	
 	public NodeTree<T> getRoot(){
 		return root;
@@ -131,7 +147,7 @@ public class TreeBinaryDataStructure<T extends Object> implements DataStructures
 		throw new Exception("Method not usa"); 
 	}
 	
-	private NodeTree<T> searchNode(NodeTree<T> root, T value){
+	public NodeTree<T> searchNode(NodeTree<T> root, T value){
 		Number numberParm = (Number) value;
 		Number numberRoot = (Number) root.getValue();
 		
@@ -160,25 +176,72 @@ public class TreeBinaryDataStructure<T extends Object> implements DataStructures
 		return root;
 	}
 	
+	private boolean isChildLeft(NodeTree<T> node) {
+		return node.getLeft() != null ? true : false;
+	}
+	
+	private boolean isChildRight(NodeTree<T> node) {
+		return node.getRight() != null ? true : false;
+	}
+	
+	
+	private Number sucessor(T val) {
+		Number number = (Number) val;
+		return number.longValue() + 1;
+	}
+	
+	private NodeTree<T> searchMin(NodeTree<T> node, T value){
+		if(sucessor(value).longValue() == ((Number) value).longValue() && ((Number) node.getValue()).longValue() > sucessor(value).longValue()) {
+			return node;
+		}else {
+			if(node.getLeft() != null) {
+				return searchMin(node.getLeft(), value);
+			}
+			if(node.getRight() != null) {
+				return searchMin(node.getRight(), value);
+			}
+		}
+		return node;
+	}
+	
 	public void remove(NodeTree<T> root, T value) {
 		NodeTree<T> nodeTree = searchNode(root, value);
 		
-		if(nodeTree != null) {
-			 Number number = (Number) nodeTree.getValue();
-			 NodeTree<T> childLeft = nodeTree.getLeft();
-			 NodeTree<T> childRight = nodeTree.getRight();
-			 Number numberChildLeft = childLeft != null ? (Number) nodeTree.getLeft().getValue() : -1;
-			 Number numberChildRight = childRight != null ? (Number) nodeTree.getRight().getValue() : -1;
+		if(nodeTree != null) { 
 			 NodeTree<T> nodeFather = nodeTree.getFather();
-			 if(nodeFather != null) {
-				 if(numberChildRight.longValue() > -1) {
-					 childRight.setFather(nodeFather);
-					 nodeFather.setRight(childRight);
-					 if(numberChildLeft.longValue() > -1) {
-						childLeft.setFather(childRight); 
-						childRight.setLeft(childLeft);
-					 }
+			 if(nodeFather != null) { 
+				 if(isChildLeft(nodeTree) && isChildRight(nodeTree)) {
+					 
+				 }else {
+					  if(!isChildLeft(nodeTree) && !isChildRight(nodeTree)) {
+						  if(((Number) nodeTree.getValue()).longValue() < ((Number) nodeFather.getValue()).longValue()) {
+							  nodeFather.setLeft(null);
+						  }else {
+							  nodeFather.setRight(null);
+						  }
+					  }else {
+						  
+						  if(((Number) nodeTree.getValue()).longValue() < ((Number) nodeFather.getValue()).longValue()) {
+							  if(!isChildLeft(nodeTree) && isChildRight(nodeTree)) {
+								  nodeTree.getRight().setFather(nodeFather);
+								  nodeFather.setLeft(nodeTree.getRight());
+							  }else {
+								  nodeTree.getLeft().setFather(nodeFather);
+								  nodeFather.setLeft(nodeTree.getLeft());
+							  }
+						  }else {
+							  if(!isChildLeft(nodeTree) && isChildRight(nodeTree)) {
+								  System.out.println(nodeFather.getValue());
+								  nodeTree.getRight().setFather(nodeFather);
+								  nodeFather.setRight(nodeTree.getRight());
+							  }else {
+								  nodeTree.getRight().setFather(nodeFather);
+								  nodeFather.setRight(nodeTree.getLeft());
+							  }
+						  }
+					  }
 				 }
+				
 			 }
 		}
 	}
