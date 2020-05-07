@@ -1,32 +1,38 @@
 package br.com.java.data.structures;
 
+import br.com.java.data.structures.util.Search;
+import br.com.java.data.structures.util.Util;
+
 public class TreeBinaryDataStructure<T extends Object> implements DataStructures<T>{
 	
 	private NodeTree<T> root = new NodeTree<T>();
-	private NodeTree<T> father = root;
-	private QueueDataStructure<NodeTree<T>> fila = new QueueDataStructure<NodeTree<T>>();
+	private Integer size = 0;
+	private NodeTree<T> nodeTreeAux = null; 
+	private StackDataStructure<T> stackDataStructure = new StackDataStructure<T>();
+	private Util<T> util = new Util<T>();
 	
-	public TreeBinaryDataStructure(T value) {
+	public TreeBinaryDataStructure(T value) { 
 		this.root.setValue(value);
+		size++;
 	}
 	
 	private NodeTree<T> child(NodeTree<T> root, T value) {
 		long numberParm = ((Number) value).longValue();
 		long numberRoot = ((Number) root.getValue()).longValue();
 		
-		if(!root.equals(this.root) && (numberParm < numberRoot) && !isChildLeft(root)) {
+		if((numberParm < numberRoot) && !isChildLeft(root)) {
 			return root;
 		}
 		
-		if(!root.equals(this.root) && (numberParm > numberRoot) && !isChildRight(root)) {
+		if((numberParm > numberRoot) && !isChildRight(root)) {
 			return root;
 		}
 		
-		if(root.getLeft() != null) {
+		if((numberParm < numberRoot) && (root.getLeft() != null)) {
 			return child(root.getLeft(), value);
 		}
 		
-		if(root.getRight() != null) {
+		if((numberParm > numberRoot) && (root.getRight() != null)) {
 			return child(root.getRight(), value);
 		}
 		
@@ -35,8 +41,10 @@ public class TreeBinaryDataStructure<T extends Object> implements DataStructures
 	
 	@Override
 	public void add(T value) {
+		size++;
 		final String type = value.getClass().getGenericSuperclass().getTypeName().substring(10, value.getClass().getGenericSuperclass().getTypeName().length());
 		if(type.equals("Number")) {
+			stackDataStructure.add(value);
 			Number numberParm = (Number) value;
 			Number numberRoot = (Number) root.getValue();
 			if((isEmptyLeft()) && (numberParm.longValue() < numberRoot.longValue())) {
@@ -49,7 +57,6 @@ public class TreeBinaryDataStructure<T extends Object> implements DataStructures
 				root.setRight(node);
 			}else {
 				if(numberParm.longValue() < numberRoot.longValue()) {
-					
 					NodeTree<T> last = child(root.getLeft(), value);
 					Number number = (Number) last.getValue();
 					if(numberParm.longValue() > number.longValue()) {
@@ -57,7 +64,6 @@ public class TreeBinaryDataStructure<T extends Object> implements DataStructures
 						node.setFather(last);
 						last.setRight(node);
 					}else {
-						System.out.println(value);
 						NodeTree<T> node = new NodeTree<T>(value);
 						node.setFather(last);
 						last.setLeft(node);
@@ -82,66 +88,10 @@ public class TreeBinaryDataStructure<T extends Object> implements DataStructures
 		}
 	}
 	
- 
-	
 	public NodeTree<T> getRoot(){
 		return root;
 	}
 	
-	public void preOrdem(NodeTree<T> root) {
-		visitor(root);
-		if(root.getLeft() != null) {
-			preOrdem(root.getLeft());
-		}
-		if(root.getRight() != null) {
-			preOrdem(root.getRight());
-		}
-	}
-	
-	public void posOrdem(NodeTree<T> root) {
-		if(root.getLeft() != null) {
-			posOrdem(root.getLeft());
-		}
-		if(root.getRight() != null) {
-			posOrdem(root.getRight());
-		}
-		visitor(root);
-	}
-	
-	public void ordemSimetrica(NodeTree<T> root) {
-		if(root.getLeft() != null) {
-			ordemSimetrica(root.getLeft());
-		}
-		visitor(root);
-		if(root.getRight() != null) {
-			ordemSimetrica(root.getRight());
-		}
-	} 
-	
-	public void nivel(NodeTree<T> root, TreeBinaryDataStructure<T> tree) {
-		if(root.equals(tree.getRoot())) {
-			fila.add(root);
-		} 
-		if(!fila.isEmpty()) {
-			if(fila.front().getLeft() != null) {
-				fila.add(fila.front().getLeft());
-			}
-			if(fila.front().getRight() != null) {
-				fila.add(fila.front().getRight());
-			}
-			
-			visitor(fila.front());
-			fila.remove();
-			if(fila.front() != null) {
-				nivel(fila.front(), tree);
-			}
-		}
-	}
-	
-	private void visitor(NodeTree<T> nodeTree) {
-		System.out.print(nodeTree.getValue() + " ");
-	}
-
 	@Override
 	public void remove() throws Exception {
 		throw new Exception("Method not usa"); 
@@ -150,30 +100,32 @@ public class TreeBinaryDataStructure<T extends Object> implements DataStructures
 	public NodeTree<T> searchNode(NodeTree<T> root, T value){
 		Number numberParm = (Number) value;
 		Number numberRoot = (Number) root.getValue();
-		
 		if(root.equals(this.root)) {
 			if(numberParm.longValue() > numberRoot.longValue()) {
 				root = root.getRight();
+				nodeTreeAux = root;
 			}else if(numberParm.longValue() < numberRoot.longValue()){
 				root = root.getLeft();
+				nodeTreeAux = root;
 			}else {
 				return root;
 			}
 		}
+
+		if(util.parseNumberLong(nodeTreeAux.getValue()) == util.parseNumberLong(value)) {
+			return nodeTreeAux;
+		}else {
+			if(root.getLeft() != null && util.parseNumberLong(nodeTreeAux.getValue()) != util.parseNumberLong(value)) {
+				nodeTreeAux = root.getLeft();
+				searchNode(root.getLeft(), value);
+			}
+			if(root.getRight() != null && util.parseNumberLong(nodeTreeAux.getValue()) != util.parseNumberLong(value)) {
+				nodeTreeAux = root.getRight();
+				searchNode(root.getRight(), value);
+			}  
+		} 
 		
-		if(root.getValue().equals(value)) {
-			return root;
-		}
-		
-		if(root.getLeft() != null) {
-			return searchNode(root.getLeft(), value);
-		}
-		
-		if(root.getRight() != null) {
-			return searchNode(root.getRight(), value);
-		}  
-		
-		return root;
+		return nodeTreeAux;
 	}
 	
 	private boolean isChildLeft(NodeTree<T> node) {
@@ -185,32 +137,72 @@ public class TreeBinaryDataStructure<T extends Object> implements DataStructures
 	}
 	
 	
-	private Number sucessor(T val) {
-		Number number = (Number) val;
-		return number.longValue() + 1;
+	private long sucessor(long val) {
+		return val + 1;
 	}
 	
-	private NodeTree<T> searchMin(NodeTree<T> node, T value){
-		if(sucessor(value).longValue() == ((Number) value).longValue() && ((Number) node.getValue()).longValue() > sucessor(value).longValue()) {
-			return node;
-		}else {
-			if(node.getLeft() != null) {
-				return searchMin(node.getLeft(), value);
-			}
-			if(node.getRight() != null) {
-				return searchMin(node.getRight(), value);
+	private NodeTree<T> searchMin(NodeTree<T> root, T value){
+		Search<T> search = new Search<T>(stackDataStructure.extractValues());
+		Number numberParm = (Number) value;
+		Number numberRoot = (Number) root.getValue();
+		if(root.equals(this.root)) {
+			NodeTree<T> nodeSearch = searchNode(root, value);
+			if(!isChildLeft(nodeSearch) && !isChildRight(nodeSearch)) {
+				return null;
+			} 
+			if(numberParm.longValue() > numberRoot.longValue()) {
+				root = root.getRight();
+				nodeTreeAux = root;
+			}else if(numberParm.longValue() < numberRoot.longValue()){
+				root = root.getLeft();
+				nodeTreeAux = root;
+			}else {
+				return root;
 			}
 		}
-		return node;
+		
+		long seach = search.searchForLowerValue(value) != null ? ((Number) search.searchForLowerValue(value)).longValue() : -1;
+		if(util.parseNumberLong(nodeTreeAux.getValue()) == seach) {
+			return nodeTreeAux;
+		}
+		
+		if(root.getLeft() != null && util.parseNumberLong(nodeTreeAux.getValue()) != seach) {
+			nodeTreeAux = root.getLeft();
+			searchMin(root.getLeft(), value);
+		}
+		if(root.getRight() != null && util.parseNumberLong(nodeTreeAux.getValue()) != seach) {
+			nodeTreeAux = root.getRight();
+			searchMin(root.getRight(), value);
+		}  
+		
+		return nodeTreeAux;
 	}
+	 
 	
 	public void remove(NodeTree<T> root, T value) {
+		size--;
 		NodeTree<T> nodeTree = searchNode(root, value);
-		
 		if(nodeTree != null) { 
 			 NodeTree<T> nodeFather = nodeTree.getFather();
 			 if(nodeFather != null) { 
 				 if(isChildLeft(nodeTree) && isChildRight(nodeTree)) {
+					 NodeTree<T> nodeMin = searchMin(root, value);
+					 long numberFather = ((Number) nodeFather.getValue()).longValue();
+					 long numberNodeMin = ((Number) nodeMin.getValue()).longValue();
+					 long numberRemove = ((Number) nodeTree.getValue()).longValue();
+					 nodeMin.setFather(nodeFather);
+					 if(numberRemove > numberNodeMin) {
+						 nodeMin.setRight(nodeTree.getRight());
+						 nodeTree.getRight().setFather(nodeMin);
+					 }else {
+						 nodeTree.getLeft().setFather(nodeMin);
+						 nodeMin.setLeft(nodeTree.getLeft());
+				 	 }
+					 if(numberFather > numberNodeMin) {
+						 nodeFather.setLeft(nodeMin);
+					 }else {
+						 nodeFather.setRight(nodeMin);
+					 }
 					 
 				 }else {
 					  if(!isChildLeft(nodeTree) && !isChildRight(nodeTree)) {
@@ -220,7 +212,6 @@ public class TreeBinaryDataStructure<T extends Object> implements DataStructures
 							  nodeFather.setRight(null);
 						  }
 					  }else {
-						  
 						  if(((Number) nodeTree.getValue()).longValue() < ((Number) nodeFather.getValue()).longValue()) {
 							  if(!isChildLeft(nodeTree) && isChildRight(nodeTree)) {
 								  nodeTree.getRight().setFather(nodeFather);
@@ -231,7 +222,6 @@ public class TreeBinaryDataStructure<T extends Object> implements DataStructures
 							  }
 						  }else {
 							  if(!isChildLeft(nodeTree) && isChildRight(nodeTree)) {
-								  System.out.println(nodeFather.getValue());
 								  nodeTree.getRight().setFather(nodeFather);
 								  nodeFather.setRight(nodeTree.getRight());
 							  }else {
@@ -248,7 +238,7 @@ public class TreeBinaryDataStructure<T extends Object> implements DataStructures
 
 	@Override
 	public int size() {
-		return 0;
+		return size;
 	}
 
 	public boolean isEmptyLeft() {

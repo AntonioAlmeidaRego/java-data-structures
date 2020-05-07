@@ -12,7 +12,7 @@ public class StackDataStructure<T extends Object> implements DataStructures<T>{
 		head.setProx(syrup);
 		head.setAnt(syrup);
 		syrup.setProx(head);
-		syrup.setAnt(head);
+		syrup.setAnt(head); 
 	}
 	
 	@Override
@@ -62,6 +62,19 @@ public class StackDataStructure<T extends Object> implements DataStructures<T>{
 	
 	public T back() {
 		return head.getProx().getValue();
+	}
+	
+	public T[] extractValues() {
+		T array[] = (T[]) new Comparable[size()];
+		Node<T> aux = syrup.getAnt();
+		int index = 0;
+		while(aux != head) {
+			array[index] = aux.getValue();
+			aux = aux.getAnt();
+			index++;
+		}
+		
+		return array;
 	}
 	
 	@Override
