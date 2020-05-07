@@ -13,6 +13,7 @@ public class TreeBinaryDataStructure<T extends Object> implements DataStructures
 	
 	public TreeBinaryDataStructure(T value) { 
 		this.root.setValue(value);
+		this.stackDataStructure.add(value);
 		size++;
 	}
 	
@@ -94,7 +95,7 @@ public class TreeBinaryDataStructure<T extends Object> implements DataStructures
 	
 	@Override
 	public void remove() throws Exception {
-		throw new Exception("Method not usa"); 
+		throw new Exception("unused method"); 
 	}
 	
 	public NodeTree<T> searchNode(NodeTree<T> root, T value){
@@ -136,11 +137,6 @@ public class TreeBinaryDataStructure<T extends Object> implements DataStructures
 		return node.getRight() != null ? true : false;
 	}
 	
-	
-	private long sucessor(long val) {
-		return val + 1;
-	}
-	
 	private NodeTree<T> searchMin(NodeTree<T> root, T value){
 		Search<T> search = new Search<T>(stackDataStructure.extractValues());
 		Number numberParm = (Number) value;
@@ -161,7 +157,7 @@ public class TreeBinaryDataStructure<T extends Object> implements DataStructures
 			}
 		}
 		
-		long seach = search.searchForLowerValue(value) != null ? ((Number) search.searchForLowerValue(value)).longValue() : -1;
+		long seach = search.searchForPreviousValue(value) != null ? ((Number) search.searchForPreviousValue(value)).longValue() : -1;
 		if(util.parseNumberLong(nodeTreeAux.getValue()) == seach) {
 			return nodeTreeAux;
 		}
@@ -177,12 +173,17 @@ public class TreeBinaryDataStructure<T extends Object> implements DataStructures
 		
 		return nodeTreeAux;
 	}
+	
+	public T[] extractValues() {
+		return stackDataStructure.extractValues();
+	}
 	 
 	
 	public void remove(NodeTree<T> root, T value) {
 		size--;
 		NodeTree<T> nodeTree = searchNode(root, value);
 		if(nodeTree != null) { 
+			 stackDataStructure.remove(value);
 			 NodeTree<T> nodeFather = nodeTree.getFather();
 			 if(nodeFather != null) { 
 				 if(isChildLeft(nodeTree) && isChildRight(nodeTree)) {
@@ -251,7 +252,7 @@ public class TreeBinaryDataStructure<T extends Object> implements DataStructures
 	
 	@Override
 	public boolean isEmpty() throws Exception {
-		throw new Exception("Method not usa"); 
+		throw new Exception("unused method"); 
 	}
 
 }

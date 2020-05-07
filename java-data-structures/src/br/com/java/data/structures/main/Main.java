@@ -7,8 +7,8 @@ import br.com.java.data.structures.StackDataStructure;
 import br.com.java.data.structures.TreeBinaryDataStructure;
 
 public class Main {
-
-	public static void main(String[] args) {
+	
+	public static void printStack() {
 		System.out.println("----- STACK (PILHA) ------");
 		StackDataStructure<Integer> pilha = new StackDataStructure<Integer>();
 		pilha.add(25);
@@ -20,7 +20,9 @@ public class Main {
 		System.out.println("BACK: "+ pilha.back());
 		System.out.println("SIZE: "+ pilha.size());
 		System.out.println(pilha);
-		
+	}
+	
+	public static void printQueue(){
 		System.out.println("----- QUEUE (FILA) ------");
 		QueueDataStructure<Integer> fila = new QueueDataStructure<Integer>();
 		
@@ -33,8 +35,10 @@ public class Main {
 		System.out.println("BACK: " + fila.back());
 		System.out.println("SIZE: " + fila.size());
 		System.out.println(fila); 
-		
 		System.out.println();
+	}
+	
+	public static void printDeque() {
 		System.out.println("----- Double-ended queue (DEQUE) ------");
 		DequeDataStructure<Integer> deque = new DequeDataStructure<Integer>();
 		deque.addBack(62);
@@ -50,6 +54,9 @@ public class Main {
 		System.out.println(deque);
 		
 		System.out.println();
+	}
+	
+	public static void printTreeBinary() {
 		System.out.println("----- TREE BINARY (ÁRVORE BINARIA) ------");
 		
 		Percurso<Integer> percurso = new Percurso<Integer>();
@@ -122,6 +129,15 @@ public class Main {
 		System.out.println("SIZE " + binaryDataStructure.size());
 		System.out.println();
 		System.out.println();
+	}
+
+	public static void main(String[] args) throws Exception{
+		
+		printStack();
+		printQueue();
+		printDeque();
+		printTreeBinary();
+		
 	}
 
 }

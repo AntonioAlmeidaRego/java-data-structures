@@ -5,4 +5,5 @@ public interface DataStructures<T extends Object> {
 	public void remove() throws Exception;
 	public int size();
 	public boolean isEmpty() throws Exception;
+	public T[] extractValues();
 }
