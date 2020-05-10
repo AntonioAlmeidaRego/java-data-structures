@@ -3,59 +3,95 @@ package br.com.java.data.structures;
 import br.com.java.data.structures.util.Search;
 import br.com.java.data.structures.util.Util;
 
+
+// Classe Arvoré Binaria (Estrutura de Dados Não-Linear) 
 public class TreeBinaryDataStructure<T extends Object> implements DataStructures<T>{
+	// atributos da classe 
 	
-	private NodeTree<T> root = new NodeTree<T>();
-	private Integer size = 0;
-	private NodeTree<T> nodeTreeAux = null; 
-	private StackDataStructure<T> stackDataStructure = new StackDataStructure<T>();
-	private Util<T> util = new Util<T>();
+	private NodeTree<T> root = new NodeTree<T>(); // criando o objeto NodeTree com referencia da raiz da arvore
+	private Integer size = 0; // objeto Integer que será usada para informar o tamanho de 'nós' na arvore
+	private NodeTree<T> nodeTreeAux = null;  // criando um objeto NodeTree auxiliar
+	private StackDataStructure<T> stackDataStructure = new StackDataStructure<T>(); // criando um objeto Stack (Pilha) para ser usada como auxiliar
+	private Util<T> util = new Util<T>(); // criando um objeto util para ser util em algumas partes do código
 	
-	public TreeBinaryDataStructure(T value) { 
-		this.root.setValue(value);
-		this.stackDataStructure.add(value);
-		size++;
+	// Construtor da classe
+	public TreeBinaryDataStructure(T value) { // Recebe por parâmetro o valor da raiz 
+		this.root.setValue(value); // seta o valor
+		this.stackDataStructure.add(value); // inserir o valor na Stack (Pilha)
+		size++; // incrementa
 	}
 	
-	private NodeTree<T> child(NodeTree<T> root, T value) {
+	// Método privado
+	// Método usado para consultar o nó a partir da raiz e retornar um valor que esteja na arvore menor ou maior para o valor que será passado por parametro
+	// e assim será util para inserir na arvore
+	private NodeTree<T> child(NodeTree<T> root, T value) { // Recebe por referencia o nó raiz e o valor que esteja a procura segundo a regra do método 
+		// força a conversão do objeto em long, ou seja um cast
 		long numberParm = ((Number) value).longValue();
 		long numberRoot = ((Number) root.getValue()).longValue();
 		
+		// Abaxio começa as regras do método
+		
+		// Essa condição têm duas verdades que devem ser verificadas, a primeira é se o valor que esteja a procura e o valor do nó
+		// Se o valor (numberParm) for menor que do nó (numberRoot) será verdadeiro, caso contrario será falso.
+		// a segunda verificação será se o nó não tiver um filho a esquerda, caso as duas condições tiverem corretas será verdade e retornar o nó (root), 
+		// senão o fluxo continua como mostra abaixo
 		if((numberParm < numberRoot) && !isChildLeft(root)) {
 			return root;
 		}
-		
+		// Como é semelhante a condição acima têm duas verdades que devem ser verificadas, a primeira é se o valor que esteja a procura e o valor do nó
+		// Se o valor (numberParm) for maior que do nó (numberRoot) será verdadeiro, caso contrario será falso.
+		// a segunda verificação será se o nó não tiver um filho a direita, caso as duas condições tiverem corretas será verdade e retornar o nó (root), 
+		// senão o fluxo continua como mostra abaixo
 		if((numberParm > numberRoot) && !isChildRight(root)) {
 			return root;
 		}
-		
+		// Como é semelhante a condição acima têm duas verdades que devem ser verificadas, a primeira é se o valor que esteja a procura e o valor do nó
+		// Se o valor (numberParm) for menor que do nó (numberRoot) será verdadeiro, caso contrario será falso.
+		// a segunda verificação será se o nó tiver um filho a esquerda, caso as duas condições tiverem corretas será verdade e continua a busca pela subarvore a esquerda, 
+		// senão o fluxo continua como mostra abaixo
 		if((numberParm < numberRoot) && (root.getLeft() != null)) {
-			return child(root.getLeft(), value);
+			return child(root.getLeft(), value); // função recursiva. faz o percurso nas subarvores a esquerda
 		}
-		
+		// Como é semelhante a condição acima têm duas verdades que devem ser verificadas, a primeira é se o valor que esteja a procura e o valor do nó
+		// Se o valor (numberParm) for maior que do nó (numberRoot) será verdadeiro, caso contrario será falso.
+		// a segunda verificação será se o nó tiver um filho a direita, caso as duas condições tiverem corretas será verdade e continua a busca pela subarvore a direita, 
 		if((numberParm > numberRoot) && (root.getRight() != null)) {
-			return child(root.getRight(), value);
+			return child(root.getRight(), value);// função recursiva. faz o percurso nas subarvores a direita
 		}
 		
 		return root;
 	}
 	
+	// Método public
+	// Método usado para inserir valores na arvore binaria
 	@Override
 	public void add(T value) {
-		size++;
-		final String type = value.getClass().getGenericSuperclass().getTypeName().substring(10, value.getClass().getGenericSuperclass().getTypeName().length());
-		if(type.equals("Number")) {
-			stackDataStructure.add(value);
-			Number numberParm = (Number) value;
-			Number numberRoot = (Number) root.getValue();
+		size++; // incrementa o total de nós
+		final String type = 
+				value.getClass().getGenericSuperclass().getTypeName().substring(10,
+						value.getClass().getGenericSuperclass().getTypeName().length()); // retorna uma string com que contenha o valor do tipo do objeto passado por parametro
+		if(type.equals("Number")) { // Se for do tipo Number, segue o fluxo abaixo
+			stackDataStructure.add(value); // Inserir na Stack(Pilha)
+			Number numberParm = (Number) value; // converte o valor
+			Number numberRoot = (Number) root.getValue(); // converte o valor
+			
+			// Abaixo será inserido o valor na arvore binaria
+			
+			
+			// Essa condição têm duas verdades que devem ser verificadas, a primeira é se a raiz não tem filho a esquerda
+			// e a segunda é se o valor(numberParm) é menor que da raiz(numberRoot). Caso ambas serem verdades o nó será inserido na arvore a esquerda
 			if((isEmptyLeft()) && (numberParm.longValue() < numberRoot.longValue())) {
-				NodeTree<T> node = new NodeTree<T>(value);
-				node.setFather(root);
-				root.setLeft(node);
-			}else if((isEmptyRight()) && (numberParm.floatValue() > numberRoot.longValue())) {
-				NodeTree<T> node = new NodeTree<T>(value);
-				node.setFather(root);
-				root.setRight(node);
+				NodeTree<T> node = new NodeTree<T>(value); // Instancia um novo nó do tipo NodeTree
+				node.setFather(root); // seta a raiz como o pai do nó
+				root.setLeft(node); // seta o nó como filho a esquerda da raiz (e será uma raiz da subarvore a esquerda...)
+			}
+			// Se a condição acima não foi verdadeira, será verificada a proxima condição, como mostra abaixo
+			// Senão se a raiz não tem filho a direita e o valor(numberParm) for maior que a raiz (numberRoot). 
+			// Caso ambas serem verdades o nó será inserido na arvore a direita
+			else if((isEmptyRight()) && (numberParm.floatValue() > numberRoot.longValue())) {
+				NodeTree<T> node = new NodeTree<T>(value); // Instancia um novo nó do tipo NodeTree
+				node.setFather(root); // seta a raiz como o pai do nó
+				root.setRight(node); // seta o nó como filho a direita da raiz (e será uma raiz da subarvore a direita...)
 			}else {
 				if(numberParm.longValue() < numberRoot.longValue()) {
 					NodeTree<T> last = child(root.getLeft(), value);
