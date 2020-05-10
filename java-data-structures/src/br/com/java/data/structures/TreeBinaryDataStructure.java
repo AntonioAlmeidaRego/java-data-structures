@@ -3,7 +3,7 @@ package br.com.java.data.structures;
 import br.com.java.data.structures.util.Search;
 import br.com.java.data.structures.util.Util;
 
-
+// Fonte: Autoria Propria
 // Classe Arvoré Binaria (Estrutura de Dados Não-Linear) 
 public class TreeBinaryDataStructure<T extends Object> implements DataStructures<T>{
 	// atributos da classe 
@@ -93,124 +93,146 @@ public class TreeBinaryDataStructure<T extends Object> implements DataStructures
 				node.setFather(root); // seta a raiz como o pai do nó
 				root.setRight(node); // seta o nó como filho a direita da raiz (e será uma raiz da subarvore a direita...)
 			}else {
+				// Senão
+				// Se a condição acima não foi verdadeira, será verificada a proxima condição, como mostra abaixo
+				// Senão a raiz já tem filho a direita e a esquerda. Se o valor(numberParm) for menor que a raiz (numberRoot). 
+				// Caso seja verdade, será realizado uma busca
 				if(numberParm.longValue() < numberRoot.longValue()) {
-					NodeTree<T> last = child(root.getLeft(), value);
-					Number number = (Number) last.getValue();
-					if(numberParm.longValue() > number.longValue()) {
-						NodeTree<T> node = new NodeTree<T>(value);
-						node.setFather(last);
-						last.setRight(node);
-					}else {
-						NodeTree<T> node = new NodeTree<T>(value);
-						node.setFather(last);
-						last.setLeft(node);
+					NodeTree<T> nodeChildRetor = child(root.getLeft(), value); // retorna da busca
+					if(nodeChildRetor != null) { // Se for diferente de null
+						Number number = (Number) nodeChildRetor.getValue(); // converte o valor
+						if(numberParm.longValue() > number.longValue()) { // Se numberParm é maior que o number(valor retornado da funcao) será inserido a direita do nó (nodeChildRetor)
+							NodeTree<T> node = new NodeTree<T>(value); // instancia o novo nó
+							node.setFather(nodeChildRetor); // seta o pai no nó (node)
+							nodeChildRetor.setRight(node); // seta o filho a direita
+						}else { // Senão
+							NodeTree<T> node = new NodeTree<T>(value); // instancia o novo nó
+							node.setFather(nodeChildRetor); // seta o pai no nó (node)
+							nodeChildRetor.setLeft(node); // seta o filho a esquerda
+						}
 					}
 					 
-				}else {
-					NodeTree<T> last = child(root.getRight(), value);
-					if(last != null) {
-						Number number = (Number) last.getValue();
-						if(numberParm.longValue() > number.longValue()) {
-							NodeTree<T> node = new NodeTree<T>(value);
-							node.setFather(last);
-							last.setRight(node);
-						}else {
-							NodeTree<T> node = new NodeTree<T>(value);
-							node.setFather(last);
-							last.setLeft(node);
+				} // Senão
+				else {
+					NodeTree<T> nodeChildRetor = child(root.getRight(), value); // retorna da busca
+					if(nodeChildRetor != null) { // Se for diferente de null
+						// Se a condição acima não foi verdadeira, será verificada a proxima condição, como mostra abaixo
+						// Senão a raiz já tem filho a direita e a esquerda. Se o valor(numberParm) for menor que a raiz (numberRoot). 
+						// Caso seja verdade, será realizado uma busca
+						Number number = (Number) nodeChildRetor.getValue();// converte o valor
+						if(numberParm.longValue() > number.longValue()) {// Se numberParm é maior que o number(valor retornado da funcao) será inserido a direita do nó (nodeChildRetor)
+							NodeTree<T> node = new NodeTree<T>(value);// instancia o novo nó
+							node.setFather(nodeChildRetor);// seta o pai no nó (node)
+							nodeChildRetor.setRight(node);// seta o filho a direita
+						}else {// senao
+							NodeTree<T> node = new NodeTree<T>(value);// instancia o novo nó
+							node.setFather(nodeChildRetor);// seta o pai no nó (node)
+							nodeChildRetor.setLeft(node);// seta o filho a esquerda
 						}
 					}
 				}
 			}
 		}
 	}
-	
+	// Método public
+	// Método usado para retorna a raiz da arvore binaria
 	public NodeTree<T> getRoot(){
 		return root;
 	}
-	
+	// Método public
+	// Método sem uso para a estrutura da Arvore Binaria
 	@Override
 	public void remove() throws Exception {
 		throw new Exception("unused method"); 
 	}
-	
-	public NodeTree<T> searchNode(NodeTree<T> root, T value){
-		Number numberParm = (Number) value;
-		Number numberRoot = (Number) root.getValue();
-		if(root.equals(this.root)) {
-			if(numberParm.longValue() > numberRoot.longValue()) {
-				root = root.getRight();
-				nodeTreeAux = root;
-			}else if(numberParm.longValue() < numberRoot.longValue()){
-				root = root.getLeft();
-				nodeTreeAux = root;
-			}else {
-				return root;
+	// Método public
+	// Método usado para consultar um nó, caso ele exista, deve retorna-lo
+	public NodeTree<T> searchNode(NodeTree<T> root, T value){ // Recebe por referencia a raiz e por parametro o valor
+		Number numberParm = (Number) value; // converte o valor
+		Number numberRoot = (Number) root.getValue(); // converte o valor
+		if(root.equals(this.root)) { // Se a raiz por referencia é a raiz da arvore, se for verdade segue o fluxo dentro da condicao, senão continua o fluxo do método 
+			if(numberParm.longValue() > numberRoot.longValue()) { // Se o numberParm (valor do parametro) é maior que o numberRoot(valor da raiz)
+				root = root.getRight(); // a referencia (root) recebe a referencia do filho a direita
+				nodeTreeAux = root; // objeto recebe a referencia do root(subarvore a direita)
+			}else if(numberParm.longValue() < numberRoot.longValue()){ // senão se o numberParm (valor do parametro) é menor que o numberRoot(valor da raiz)
+				root = root.getLeft(); // a referencia (root) recebe a referencia do filho a esquerda
+				nodeTreeAux = root; // objeto recebe a referencia do root(subarvore a esquerda)
+			}else { // senão, caso a raiz seja uma folha
+				return root; 
 			}
 		}
-
+		// Se o objeto nodeTreeAux tiver o valor igual ao value do parametro, retorna o nó com esse valor
 		if(util.parseNumberLong(nodeTreeAux.getValue()) == util.parseNumberLong(value)) {
 			return nodeTreeAux;
-		}else {
+		}else {// Senão
+			// se a referencia (root) tiver um filho a esquerda e o valor do objeto nodeTreeAux não for igual ao valor do parametro, deve continuar o percurso na arvore
 			if(root.getLeft() != null && util.parseNumberLong(nodeTreeAux.getValue()) != util.parseNumberLong(value)) {
-				nodeTreeAux = root.getLeft();
-				searchNode(root.getLeft(), value);
+				nodeTreeAux = root.getLeft(); // recebe a referencia da subarvore esquerda
+				searchNode(root.getLeft(), value); // percurso para a subarvore esquerda
 			}
+			// se a referencia (root) tiver um filho a direita e o valor do objeto nodeTreeAux não for igual ao valor do parametro, deve continuar o percurso na arvore
 			if(root.getRight() != null && util.parseNumberLong(nodeTreeAux.getValue()) != util.parseNumberLong(value)) {
-				nodeTreeAux = root.getRight();
-				searchNode(root.getRight(), value);
+				nodeTreeAux = root.getRight(); // recebe a referencia da subarvore direita
+				searchNode(root.getRight(), value); // percurso para a subarvore direita
 			}  
 		} 
 		
 		return nodeTreeAux;
 	}
 	
+	// Método private
+	// Método usado para verificar se o nó por referencia tem filho a esquerda
 	private boolean isChildLeft(NodeTree<T> node) {
-		return node.getLeft() != null ? true : false;
+		return node.getLeft() != null ? true : false; // se tiver retorna verdadeiro (true), senão retorna falso (false)
 	}
-	
+	// Método private
+	// Método usado para verificar se o nó por referencia tem filho a direita
 	private boolean isChildRight(NodeTree<T> node) {
-		return node.getRight() != null ? true : false;
+		return node.getRight() != null ? true : false;// se tiver retorna verdadeiro (true), senão retorna falso (false)
 	}
-	
-	private NodeTree<T> searchMin(NodeTree<T> root, T value){
-		Search<T> search = new Search<T>(stackDataStructure.extractValues());
-		Number numberParm = (Number) value;
-		Number numberRoot = (Number) root.getValue();
-		if(root.equals(this.root)) {
-			NodeTree<T> nodeSearch = searchNode(root, value);
-			if(!isChildLeft(nodeSearch) && !isChildRight(nodeSearch)) {
+	// Método private
+	// Método usado para retornar o nó que tenha um valor menor que o nó que será removido da arvore
+	// Este método é somente usado para as subarvores que tenham filhos (esquerda e direita)
+	private NodeTree<T> searchMin(NodeTree<T> root, T value){ // Recebe por referencia a raiz e por parametro o valor
+		Search<T> search = new Search<T>(stackDataStructure.extractValues()); // Objeto usado para ser util no código abaixo
+		Number numberParm = (Number) value; // converte o valor
+		Number numberRoot = (Number) root.getValue(); // converte o valor
+		if(root.equals(this.root)) { // se a referencia do root é a referencia da raiz, retorna verdadeiro
+			NodeTree<T> nodeSearch = searchNode(root, value); // faz a consulta pelo valor (value)
+			if(!isChildLeft(nodeSearch) && !isChildRight(nodeSearch)) { // se esse nó é folha, retorna null
 				return null;
 			} 
+			// Se numberParm(value) é maior que o numberRoot(valor da referencia do root)
 			if(numberParm.longValue() > numberRoot.longValue()) {
-				root = root.getRight();
-				nodeTreeAux = root;
+				root = root.getRight();// a referencia (root) recebe a referencia do filho a direita
+				nodeTreeAux = root; // objeto recebe a referencia do root(subarvore a direita)
 			}else if(numberParm.longValue() < numberRoot.longValue()){
-				root = root.getLeft();
-				nodeTreeAux = root;
-			}else {
-				return root;
+				root = root.getLeft();// a referencia (root) recebe a referencia do filho a esquerda
+				nodeTreeAux = root;// objeto recebe a referencia do root(subarvore a esquerda)
 			}
 		}
-		
+		// retorna o valor anterior do nó que será removido
 		long seach = search.searchForPreviousValue(value) != null ? ((Number) search.searchForPreviousValue(value)).longValue() : -1;
-		if(util.parseNumberLong(nodeTreeAux.getValue()) == seach) {
+		if(util.parseNumberLong(nodeTreeAux.getValue()) == seach) { // se existe esse valor retorna o nó que será trocado
 			return nodeTreeAux;
 		}
-		
+		// se a referencia (root) tiver um filho a esquerda e o valor(search) não for igual ao valor do nodeTreeAux, deve continuar o percurso na arvore
 		if(root.getLeft() != null && util.parseNumberLong(nodeTreeAux.getValue()) != seach) {
-			nodeTreeAux = root.getLeft();
-			searchMin(root.getLeft(), value);
+			nodeTreeAux = root.getLeft();// recebe a referencia da subarvore esquerda
+			searchMin(root.getLeft(), value);// percurso para a subarvore esquerda
 		}
+		// se a referencia (root) tiver um filho a direita e o valor(search) não for igual ao valor do nodeTreeAux, deve continuar o percurso na arvore
 		if(root.getRight() != null && util.parseNumberLong(nodeTreeAux.getValue()) != seach) {
-			nodeTreeAux = root.getRight();
-			searchMin(root.getRight(), value);
+			nodeTreeAux = root.getRight();// recebe a referencia da subarvore direita
+			searchMin(root.getRight(), value);// percurso para a subarvore direita
 		}  
 		
 		return nodeTreeAux;
 	}
-	
+	// Método public
+	// Método usado para retornar todos os valores da arvore
 	public T[] extractValues() {
+		// retorno dos valores a partir da pilha usada como auxiliar
 		return stackDataStructure.extractValues();
 	}
 	 
