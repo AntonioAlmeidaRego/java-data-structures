@@ -129,6 +129,7 @@ public class Main {
 		System.out.println("SIZE " + binaryDataStructure.size());
 		System.out.println();
 		System.out.println();
+		
 	}
 
 	public static void main(String[] args) throws Exception{

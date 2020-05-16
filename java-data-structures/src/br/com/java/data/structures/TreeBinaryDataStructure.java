@@ -238,9 +238,10 @@ public class TreeBinaryDataStructure<T extends Object> implements DataStructures
 	 
 	
 	public void remove(NodeTree<T> root, T value) {
-		size--;
+		
 		NodeTree<T> nodeTree = searchNode(root, value);
 		if(nodeTree != null) { 
+			 size--;
 			 stackDataStructure.remove(value);
 			 NodeTree<T> nodeFather = nodeTree.getFather();
 			 if(nodeFather != null) { 
@@ -291,7 +292,70 @@ public class TreeBinaryDataStructure<T extends Object> implements DataStructures
 					  }
 				 }
 				
+			 }else {
+				 if(nodeTree.equals(this.root)) {
+					 if(isChildLeft(nodeTree) && isChildRight(nodeTree)) {
+						 NodeTree<T> nodeMin = searchMin(this.root, value);
+						 nodeFather = nodeMin.getFather();
+						 if(util.parseNumberInteger(nodeFather.getValue()) > util.parseNumberInteger(nodeMin.getValue())) {
+							 if(!isChildLeft(nodeMin) && !isChildRight(nodeMin)) {
+								 nodeFather.setLeft(null);
+							 }else {
+								 if(isChildLeft(nodeMin) && !isChildRight(nodeMin)) {
+									 nodeFather.setLeft(nodeMin.getLeft());
+								 }else {
+									 if(!isChildLeft(nodeMin) && isChildRight(nodeMin)) {
+										 nodeFather.setLeft(nodeMin.getRight());
+									 }
+								 }
+							 }
+						 }else {
+							 if(!isChildLeft(nodeMin) && !isChildRight(nodeMin)) {
+								 nodeFather.setRight(null);
+							 }else {
+								 if(isChildLeft(nodeMin) && !isChildRight(nodeMin)) {
+									 nodeFather.setRight(nodeMin.getLeft());
+								 }else {
+									 if(!isChildLeft(nodeMin) && isChildRight(nodeMin)) {
+										 nodeFather.setRight(nodeMin.getRight());
+									 }
+								 }
+							 }
+						 }
+						 
+						 nodeMin.setLeft(this.root.getLeft());
+						 nodeMin.setRight(this.root.getRight());
+						 
+						 nodeMin.setFather(null);
+						 this.root = nodeMin;
+						 
+					 }else {
+						  if(!isChildLeft(nodeTree) && !isChildRight(nodeTree)) {
+							  nodeTree = null;
+							  this.root = nodeTree;
+						  }else {
+							  if(isChildLeft(nodeTree) && !isChildRight(nodeTree)) {
+								  NodeTree<T> child = nodeTree.getLeft();
+								  child.setLeft(null);
+								  child.setRight(null);
+								  child.setFather(null);
+								  this.root = child;
+							  }else {
+								  if(!isChildLeft(nodeTree) && isChildRight(nodeTree)) {
+									  NodeTree<T> child = nodeTree.getRight();
+									  child.setLeft(null);
+									  child.setRight(null);
+									  child.setFather(null);
+									  this.root = child;
+								  }
+							  }
+							  
+						  }
+					 }
+				 }
 			 }
+		}else {
+			System.out.println("Object not found!");
 		}
 	}
 
